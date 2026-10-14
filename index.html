@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manual Agrícola Digital - Sopachuy</title>
+<style>
+:root{--verde:#1f5a34;--verde2:#2f7d4a;--tierra:#5a3b27;--maiz:#e9b824;--fondo:#edf1e6;--blanco:#fff;--texto:#22281f;--gris:#6a7264;--rojo:#b3402a}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;background:var(--fondo);color:var(--texto);line-height:1.55;min-height:100vh}
+header{background:var(--verde);color:#fff;padding:18px 16px;border-bottom:6px solid var(--maiz)}
+header .in{max-width:980px;margin:auto;display:flex;align-items:center;gap:14px}
+header .logo{font-size:2.4rem}
+header h1{font-size:1.35rem;line-height:1.2}
+header p{font-size:.9rem;opacity:.85}
+main{max-width:980px;margin:auto;padding:18px 14px 50px}
+.page{display:none}
+.page.activa{display:block}
+/* Inicio */
+.intro{background:var(--blanco);border-left:6px solid var(--maiz);padding:14px 16px;border-radius:6px;margin-bottom:16px}
+.buscar{width:100%;padding:13px 14px;font-size:1rem;border:2px solid #c8d1bb;border-radius:8px;margin-bottom:16px;background:#fff}
+.buscar:focus,.btn-menu:focus-visible,.volver:focus-visible,summary:focus-visible,.mes:focus-visible{outline:3px solid var(--maiz);outline-offset:2px}
+.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.btn-menu{display:flex;align-items:center;gap:14px;text-align:left;background:var(--blanco);border:2px solid #d3dbc8;border-bottom:5px solid var(--verde2);border-radius:10px;padding:14px;cursor:pointer;font:inherit;color:inherit;transition:transform .12s,border-color .12s}
+.btn-menu:hover{transform:translateY(-3px);border-color:var(--verde2)}
+.btn-menu .ic{font-size:2.2rem;flex:none}
+.btn-menu b{display:block;font-size:1.08rem;color:var(--verde)}
+.btn-menu span.d{font-size:.85rem;color:var(--gris)}
+.vacio{display:none;padding:20px;text-align:center;color:var(--gris)}
+/* Páginas */
+.volver{background:var(--tierra);color:#fff;border:0;border-radius:8px;padding:10px 16px;font:inherit;cursor:pointer;margin-bottom:14px}
+.volver:hover{background:#42291a}
+.page h2{color:var(--verde);font-size:1.6rem;margin-bottom:4px}
+.page .sub{color:var(--gris);margin-bottom:16px}
+.caja{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:14px;border:1px solid #d9e0cf}
+.caja h3{color:var(--tierra);margin-bottom:6px;font-size:1.08rem}
+.caja ul,.caja ol{padding-left:22px}
+.caja li{margin:3px 0}
+.aviso{background:#fff4d6;border-left:6px solid var(--maiz);padding:11px 14px;border-radius:6px;margin:14px 0;font-size:.93rem}
+.peligro{background:#fbe6e1;border-left-color:var(--rojo)}
+details{background:#fff;border:1px solid #d9e0cf;border-radius:10px;margin-bottom:10px;overflow:hidden}
+summary{cursor:pointer;padding:13px 16px;font-weight:700;color:var(--verde);list-style:none;display:flex;align-items:center;gap:10px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";margin-left:auto;font-size:1.4rem;color:var(--tierra)}
+details[open] summary::after{content:"–"}
+details[open] summary{background:#f1f5ea;border-bottom:1px solid #d9e0cf}
+.ficha{padding:12px 16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 18px}
+.ficha div b{display:block;font-size:.8rem;color:var(--gris);font-weight:600}
+.ficha .ancho{grid-column:1/-1;background:#f7f9f2;padding:8px 10px;border-radius:6px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:.93rem}
+th,td{border:1px solid #d3dbc8;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--verde);color:#fff}
+.tabla{overflow-x:auto;margin-bottom:14px;border-radius:8px}
+/* Calendario */
+.meses{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin-bottom:14px}
+.mes{background:#fff;border:2px solid #cfd8c3;border-radius:8px;padding:10px 4px;font:inherit;cursor:pointer;text-align:center}
+.mes.sel{background:var(--verde);color:#fff;border-color:var(--verde)}
+.mes.hoy::after{content:" (hoy)";font-size:.7rem}
+footer{text-align:center;color:var(--gris);font-size:.85rem;padding:20px 14px;border-top:1px solid #cfd8c3}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media print{header,.volver,.buscar,footer{display:none}.page{display:block!important}}
+</style>
+</head>
+<body>
+<header><div class="in"><div class="logo">🌽</div><div><h1>Manual Agrícola Digital · Sopachuy</h1><p>Consulta para productores del valle · Chuquisaca, Bolivia</p></div></div></header>
+<main>
+
+<!-- INICIO -->
+<section class="page activa" id="inicio">
+  <div class="intro"><b>Bienvenido.</b> Toque un botón para consultar el tema que necesita. Este manual funciona sin internet una vez abierto.</div>
+  <input class="buscar" id="buscar" type="search" placeholder="Buscar un tema (ej. riego, tomate, helada)" aria-label="Buscar tema">
+  <div class="menu" id="menu"></div>
+  <p class="vacio" id="vacio">No se encontró ese tema. Pruebe con otra palabra.</p>
+  <div class="aviso">La información es una guía general. Las fechas y cantidades pueden variar según la comunidad, la altura y el año. Consulte también con técnicos del municipio, INIAF o su asociación de productores.</div>
+</section>
+
+<!-- VERDURAS -->
+<section class="page" id="verduras"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>🥬 Verduras y hortalizas</h2><p class="sub">Toque cada cultivo para ver cuándo sembrar, cosechar y cómo cuidarlo.</p><div id="lista-verduras"></div></section>
+
+<!-- FRUTAS -->
+<section class="page" id="frutas"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>🍑 Frutas</h2><p class="sub">Frutales adaptados al clima templado del valle.</p><div id="lista-frutas"></div></section>
+
+<!-- CEREALES -->
+<section class="page" id="cereales"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>🌽 Cereales, tubérculos y legumbres</h2><p class="sub">Cultivos base de la alimentación y la economía familiar.</p><div id="lista-cereales"></div></section>
+
+<!-- ARAR -->
+<section class="page" id="arar"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>🐂 Cómo preparar y arar la tierra</h2><p class="sub">Una buena preparación del terreno define la cosecha.</p>
+  <div class="caja"><h3>Pasos recomendados</h3><ol>
+    <li><b>Elegir el momento:</b> ara cuando la tierra esté húmeda pero no empapada. Si al apretar un puñado forma un terrón que se deshace con el dedo, está lista.</li>
+    <li><b>Limpiar el terreno:</b> retire piedras grandes, malezas y restos del cultivo anterior. Los rastrojos sanos se pueden incorporar como abono.</li>
+    <li><b>Arado profundo:</b> con yunta o tractor, a 20–30 cm de profundidad para voltear la tierra y romper capas duras.</li>
+    <li><b>Dejar reposar:</b> 1–2 semanas al sol. Esto ayuda a controlar larvas y hongos del suelo.</li>
+    <li><b>Abonar:</b> esparza estiércol bien descompuesto o compost antes del segundo paso.</li>
+    <li><b>Rastrar o mullir:</b> rompa los terrones para dejar una cama fina donde la semilla germine mejor.</li>
+    <li><b>Trazar surcos:</b> en pendiente, siempre en curvas de nivel (de forma transversal a la ladera).</li>
+  </ol></div>
+  <div class="caja"><h3>Cuidado en laderas</h3><ul>
+    <li>Arar a favor de la pendiente provoca erosión: el agua lleva la tierra fértil.</li>
+    <li>Construya terrazas, zanjas de infiltración o barreras vivas de pasto o arbustos.</li>
+    <li>Deje cobertura (rastrojo) en la superficie durante la época de lluvias.</li>
+  </ul></div>
+  <div class="caja"><h3>Herramientas y su uso</h3><ul>
+    <li><b>Yunta y arado de palo o reja:</b> ideal para parcelas pequeñas y laderas.</li>
+    <li><b>Tractor:</b> para terrenos planos y más grandes. Evite pasar con suelo muy mojado: lo compacta.</li>
+    <li><b>Pico, azadón y chuntilla:</b> para esquinas, bordes y huertas familiares.</li>
+  </ul></div>
+  <div class="aviso">No queme los rastrojos: se pierde materia orgánica, mueren los microorganismos útiles y aumenta el riesgo de incendios.</div></section>
+
+<!-- ABONOS -->
+<section class="page" id="suelo"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>🌱 Suelo y abonos</h2><p class="sub">Un suelo vivo produce más y gasta menos en insumos.</p>
+  <div class="tabla"><table><tr><th>Abono</th><th>Cómo prepararlo o usarlo</th><th>Dosis guía</th></tr>
+    <tr><td>Estiércol de oveja, vaca o cabra</td><td>Debe estar bien descompuesto (6 meses, oscuro y sin olor fuerte). El fresco quema las raíces.</td><td>2–4 kg por m²</td></tr>
+    <tr><td>Compost</td><td>Capas de restos de cocina, hojas, rastrojo y estiércol. Mantener húmedo y voltear cada 15 días. Listo en 2–3 meses.</td><td>2–3 kg por m²</td></tr>
+    <tr><td>Guano de isla o de corral</td><td>Rico en nitrógeno y fósforo. Mezclar con la tierra, no poner junto a la semilla.</td><td>100–200 g por m²</td></tr>
+    <tr><td>Abonos verdes</td><td>Siembre haba, arveja, vicia o tarwi y entiérrelos cuando florezcan. Aportan nitrógeno.</td><td>Un ciclo cada 2–3 años</td></tr>
+    <tr><td>Ceniza de leña</td><td>Aporta potasio y reduce acidez. Úsela en poca cantidad.</td><td>100 g por m²</td></tr></table></div>
+  <div class="caja"><h3>Rotación de cultivos</h3><p>No siembre lo mismo en el mismo lugar año tras año. Una rotación sencilla: <b>papa → cereal (maíz o trigo) → leguminosa (haba o arveja) → hortaliza</b>. Así se cortan ciclos de plagas y se recupera el suelo.</p></div>
+  <div class="caja"><h3>Cómo saber si el suelo está sano</h3><ul>
+    <li>Tiene lombrices y olor a tierra fresca.</li>
+    <li>El agua se infiltra en pocos minutos y no se encharca.</li>
+    <li>Se desmenuza fácil y no forma costra dura.</li></ul></div></section>
+
+<!-- CLIMA -->
+<section class="page" id="clima"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>⛅ Clima y temporadas</h2><p class="sub">Sopachuy está en un valle interandino con clima templado y lluvias concentradas en verano.</p>
+  <div class="tabla"><table><tr><th>Temporada</th><th>Meses (aprox.)</th><th>Características</th><th>Qué hacer</th></tr>
+    <tr><td>🌧️ Lluviosa</td><td>Noviembre a marzo</td><td>Concentra casi toda la lluvia. Posibles granizadas y tormentas.</td><td>Siembra de maíz, papa de siembra grande, hortalizas de verano. Vigilar hongos.</td></tr>
+    <tr><td>🍂 Seca de transición</td><td>Abril y mayo</td><td>Baja la lluvia, días soleados y noches frescas.</td><td>Cosecha de maíz, papa y frutas tardías. Secado y almacenamiento.</td></tr>
+    <tr><td>❄️ Seca fría</td><td>Junio a agosto</td><td>Noches con riesgo de heladas, aire seco, mucho sol.</td><td>Siembra de trigo y arveja bajo riego, poda de frutales, preparar tierra.</td></tr>
+    <tr><td>🌬️ Seca cálida</td><td>Septiembre y octubre</td><td>Sube la temperatura, hay viento y falta agua. Riesgo de heladas tardías al inicio.</td><td>Siembra de papa temprana y hortalizas con riego. Arar antes de las lluvias.</td></tr></table></div>
+  <div class="caja"><h3>Cómo protegerse de heladas y granizo</h3><ul>
+    <li>Riegue por la tarde antes de una noche fría: la tierra húmeda guarda más calor.</li>
+    <li>Cubra plantines con paja, plástico o telas durante la noche.</li>
+    <li>Haga humo suave (sin quemar basura) en los bordes de la parcela cuando se espera helada.</li>
+    <li>Siembre en parcelas escalonadas y variedades distintas para repartir el riesgo.</li>
+    <li>Observe señales locales: cielo muy despejado y viento calmo al atardecer suelen anunciar helada.</li></ul></div>
+  <div class="aviso">Hoy el clima cambia más que antes. Ajuste las fechas de siembra según cuándo empiezan las lluvias cada año, no solo por el calendario.</div></section>
+
+<!-- RIEGO -->
+<section class="page" id="riego"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>💧 Riego</h2><p class="sub">Regar bien es regar a tiempo y sin desperdiciar agua.</p>
+  <div class="tabla"><table><tr><th>Método</th><th>Ventajas</th><th>Cuidados</th></tr>
+    <tr><td><b>Por surcos</b></td><td>Barato y fácil. Sirve para maíz, papa y hortalizas.</td><td>Surcos con poca pendiente para evitar erosión. Se pierde algo de agua.</td></tr>
+    <tr><td><b>Por aspersión</b></td><td>Reparte parejo, bueno para pasto, arveja y hortalizas.</td><td>No regar con viento fuerte. Evita mojar hojas de noche (hongos).</td></tr>
+    <tr><td><b>Por goteo</b></td><td>Ahorra hasta 50% de agua. Ideal para tomate, locoto y frutales.</td><td>Filtrar el agua y limpiar los goteros con frecuencia.</td></tr>
+    <tr><td><b>Atajados y cosecha de agua</b></td><td>Guardan agua de lluvia para la época seca.</td><td>Cercar, revestir si es posible y limpiar antes de lluvias.</td></tr></table></div>
+  <div class="caja"><h3>Buenas prácticas</h3><ul>
+    <li>Riegue temprano en la mañana o al atardecer; evita que el sol evapore el agua.</li>
+    <li>Revise la humedad: meta el dedo 5 cm. Si sale seco, hay que regar.</li>
+    <li>Poco y frecuente en plantines; más espaciado y profundo en cultivos grandes.</li>
+    <li>Cubra el suelo con paja (mulch) para conservar humedad.</li>
+    <li>Respete los turnos de agua de la comunidad y mantenga limpias las acequias.</li></ul></div>
+  <div class="caja"><h3>Señales en la planta</h3><ul>
+    <li><b>Falta de agua:</b> hojas enrolladas o caídas al mediodía, crecimiento lento, flores y frutos que caen.</li>
+    <li><b>Exceso de agua:</b> hojas amarillas, pudrición del cuello, hongos y mal olor en la raíz.</li></ul></div>
+  <div class="aviso">Cantidad de agua orientativa: hortalizas en huerta, 4–6 litros por m² por riego cada 2–4 días en época seca. Ajuste según suelo (arenoso pide más frecuencia) y calor.</div></section>
+
+<!-- PLAGAS -->
+<section class="page" id="plagas"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>🐛 Plagas, enfermedades y fumigación</h2><p class="sub">Primero prevenir, después controlar. Fumigue solo cuando sea necesario.</p>
+  <div class="aviso peligro"><b>Seguridad al fumigar:</b> use guantes, mascarilla, lentes, botas y ropa que cubra el cuerpo. No coma ni fume mientras aplica. No fumigue con viento ni cerca de niños, animales o fuentes de agua. Lea la etiqueta y respete las dosis. Lave la ropa aparte y guarde los envases fuera del alcance de los niños. Respete los días de espera antes de cosechar.</div>
+  <div id="lista-plagas"></div>
+  <div class="caja"><h3>Preparados caseros (control suave)</h3><ul>
+    <li><b>Ají y ajo:</b> licue 5 ajíes y 5 dientes de ajo en 1 litro de agua, deje reposar un día, cuele y diluya en 10 litros. Para pulgones y orugas pequeñas.</li>
+    <li><b>Jabón y agua:</b> 20 g de jabón neutro rallado en 1 litro de agua para pulgones y mosca blanca. Probar primero en pocas hojas.</li>
+    <li><b>Ceniza:</b> espolvoree sobre hojas húmedas o al pie para hormigas y babosas.</li>
+    <li><b>Ortiga fermentada:</b> 1 kg de hojas en 10 litros de agua por 7–10 días; diluya 1 a 10 y use como repelente y fortificante.</li></ul></div>
+  <div class="caja"><h3>Prevención</h3><ul>
+    <li>Rote cultivos y use semilla sana.</li>
+    <li>Revise el cultivo cada semana.</li>
+    <li>Elimine plantas enfermas y no las deje en la parcela.</li>
+    <li>Cultive flores y plantas aromáticas como caléndula y albahaca que atraen a los insectos benéficos.</li></ul></div></section>
+
+<!-- CALENDARIO -->
+<section class="page" id="calendario"><button class="volver" data-ir="inicio">← Volver al inicio</button>
+  <h2>📅 Calendario agrícola</h2><p class="sub">Elija un mes para ver las labores recomendadas.</p>
+  <div class="meses" id="meses"></div><div class="caja" id="detalle-mes"></div>
+  <div class="aviso">Guía referencial para el valle de Sopachuy. Si las lluvias se adelantan o se retrasan, mueva las fechas de siembra.</div></section>
+
+</main>
+<footer>Manual Agrícola Digital · Sopachuy · Proyecto de Sistemas Informáticos</footer>
+
+<script>
+/* ===== DATOS ===== */
+const TEMAS=[
+ {id:"verduras",ic:"🥬",t:"Verduras y hortalizas",d:"Siembra y cosecha de tomate, cebolla, lechuga y más",k:"verdura hortaliza tomate cebolla zanahoria lechuga repollo locoto zapallo siembra cosecha"},
+ {id:"frutas",ic:"🍑",t:"Frutas",d:"Durazno, manzana, uva, pera, higo, tuna",k:"fruta durazno manzana uva pera higo tuna frutal poda"},
+ {id:"cereales",ic:"🌽",t:"Cereales, papa y legumbres",d:"Maíz, papa, trigo, haba, arveja",k:"maiz papa trigo haba arveja cereal tuberculo legumbre"},
+ {id:"arar",ic:"🐂",t:"Cómo arar la tierra",d:"Pasos, herramientas y cuidado en laderas",k:"arar arado tierra yunta tractor preparar suelo ladera surco"},
+ {id:"suelo",ic:"🌱",t:"Suelo y abonos",d:"Compost, estiércol y rotación de cultivos",k:"abono compost estiercol guano rotacion suelo fertilizante"},
+ {id:"clima",ic:"⛅",t:"Clima y temporadas",d:"Lluvias, heladas y qué hacer en cada época",k:"clima temporada lluvia helada granizo sequia epoca"},
+ {id:"riego",ic:"💧",t:"Riego",d:"Métodos, horarios y señales de la planta",k:"riego agua regar goteo aspersion surco atajado"},
+ {id:"plagas",ic:"🐛",t:"Plagas, enfermedades y fumigación",d:"Reconocer, prevenir y controlar con seguridad",k:"plaga enfermedad fumigar fumigacion pulgon gusano hongo rancha insecticida"},
+ {id:"calendario",ic:"📅",t:"Calendario agrícola",d:"Labores del campo mes por mes",k:"calendario mes año labores fechas"}
+];
+/* [nombre, emoji, siembra, cosecha, distancia, riego, consejo] */
+const VERDURAS=[
+ ["Tomate","🍅","Almácigo agosto-septiembre; trasplante septiembre-octubre","90–120 días tras el trasplante","50 cm entre plantas, 1 m entre surcos","Cada 2–3 días, sin mojar hojas","Use tutores y quite brotes laterales. Rotar con cereal para evitar rancha."],
+ ["Cebolla","🧅","Almácigo mayo-julio; trasplante julio-agosto","5–6 meses","10 cm entre plantas, 30 cm entre surcos","Cada 5–7 días; suspender 2 semanas antes de cosechar","Cosechar cuando el 70% de las hojas se doble. Secar al aire 1 semana."],
+ ["Zanahoria","🥕","Directa de agosto a noviembre","3–4 meses","5 cm entre plantas, 25 cm entre surcos","Humedad pareja, sin encharcar","Suelo suelto y sin piedras para que la raíz crezca derecha. Ralear plantas."],
+ ["Lechuga","🥬","Almácigo todo el año con riego; mejor mar-oct","45–70 días","25–30 cm","Cada 2–3 días, poco volumen","En calor intenso dé media sombra para evitar que suba a flor."],
+ ["Repollo","🥦","Almácigo marzo-mayo y agosto; trasplante a 5 semanas","3–4 meses","40–50 cm","Cada 4–5 días","Vigile la polilla de las coles y las orugas. Abone con compost."],
+ ["Locoto","🌶️","Almácigo agosto; trasplante octubre tras las heladas","5–7 meses","60–80 cm","Cada 4–6 días, constante","Sensible a heladas. Cubra plantas jóvenes en noches frías."],
+ ["Zapallo","🎃","Directa octubre-noviembre","4–5 meses","1.5 a 2 m entre plantas","Cada 5–7 días","Deje guía libre y coloque paja bajo el fruto para evitar pudrición."],
+ ["Arveja verde y vainita","🫛","Arveja: marzo y julio-agosto; vainita: septiembre-noviembre","Arveja 3–4 meses; vainita 60–90 días","Arveja 5 cm en surcos de 70 cm","Cada 6–8 días, evitar exceso","Fija nitrógeno en el suelo. Ideal antes de hortalizas exigentes."]
+];
+/* [nombre, emoji, plantación, floración/poda, cosecha, riego, cuidados] */
+const FRUTAS=[
+ ["Durazno","🍑","Plantines en julio-agosto (reposo invernal)","Poda en julio; floración agosto-septiembre","Diciembre a febrero","Cada 10–15 días en seca; más en floración y cuajado","Ralear frutos pequeños para mejor tamaño. Controlar mosca de la fruta y lepra."],
+ ["Manzana","🍎","Julio-agosto","Poda en julio; floración septiembre","Febrero a abril","Cada 10–15 días","Poda de formación los primeros años. Cuidado con la polilla de la manzana."],
+ ["Uva","🍇","Estacas o plantines en julio-agosto","Poda en julio-agosto, dejar 2–3 yemas por vara","Febrero a abril","Cada 10–15 días, poco en maduración","Conduzca en parral o espaldera. Vigile oídio y mildiu en épocas húmedas."],
+ ["Pera","🍐","Julio-agosto","Poda en invierno","Febrero a marzo","Cada 10–15 días","Necesita polinización cruzada; plante 2 variedades cerca."],
+ ["Higo","🌿","Estacas o plantines en agosto-septiembre","Poda ligera tras la cosecha","Enero a abril","Cada 15 días, resistente a sequía","Poco exigente, ideal para laderas soleadas. Proteja los brotes jóvenes de heladas."],
+ ["Tuna","🌵","Pencas en septiembre-octubre","Sin poda fuerte, retirar pencas dañadas","Enero a abril","Muy poco; solo en sequías largas","Suelo bien drenado. Cuidado con la cochinilla. Úsese con guantes."]
+];
+const CEREALES=[
+ ["Maíz","🌽","Septiembre-noviembre (con las primeras lluvias)","Choclo 4–5 meses; grano seco 6–7 meses","Surcos a 80 cm, golpes cada 40 cm con 2–3 semillas","Riego de apoyo si falta lluvia en floración","Aporque a los 40 días. Cosechar seco y guardar bien desgranado y sin humedad."],
+ ["Papa","🥔","Temprana: agosto-septiembre con riego; de lluvia: octubre-noviembre","3–5 meses según variedad","Surcos a 80–90 cm, semilla cada 30 cm","Cada 7–10 días, constante en tuberización","Use semilla sana. Aporque dos veces. Vigile rancha, gorgojo y polilla."],
+ ["Trigo","🌾","Mayo a julio (con riego) o diciembre","5–6 meses","Voleo o surco, 120–150 kg por hectárea","2–3 riegos en macollaje, encañado y espigado","Cosechar con grano duro y paja amarilla. Trillar y secar antes de guardar."],
+ ["Haba","🫘","Septiembre-noviembre y marzo-abril","Verde 4–5 meses; seca 6–7 meses","Surcos a 70 cm, golpes cada 30 cm","Cada 8–10 días en floración","Mejora el suelo. Controle pulgón y mancha chocolate en épocas húmedas."],
+ ["Arveja","🫛","Marzo-abril y julio-agosto","Verde 3–4 meses","Surcos a 60–70 cm, semilla cada 5 cm","Cada 6–8 días","Ponga tutores en variedades trepadoras. Evite exceso de agua."]
+];
+/* [nombre, afecta, síntoma, control] */
+const PLAGAS=[
+ ["Pulgones","🟢 Casi todos los cultivos","Colonias pequeñas verdes o negras bajo las hojas, hojas rizadas y pegajosas.","Chorro de agua, jabón o ají-ajo. Proteja mariquitas. Insecticida solo si hay mucha plaga."],
+ ["Gusano cortador","🐛 Hortalizas, maíz, papa","Plantas jóvenes cortadas al ras del suelo por la noche.","Remueva la tierra al arar, recoja larvas de noche, cebo con salvado húmedo. Evite maleza."],
+ ["Polilla de la papa","🦋 Papa, tomate","Galerías en hojas y tubérculos; tubérculos con túneles.","Aporque alto, cosecha oportuna, almacenar en lugar seco con hojas de muña o eucalipto."],
+ ["Gorgojo de los Andes","🪲 Papa","Larvas blancas dentro del tubérculo, huecos en la papa.","Rotación, arado profundo, cosecha temprana. Elimine papas dañadas y restos."],
+ ["Mosca blanca","🦟 Tomate, locoto, zapallo","Insectos blancos que vuelan al mover la planta, hojas amarillas.","Trampas amarillas pegajosas, jabón, aromáticas intercaladas."],
+ ["Mosca de la fruta","🪰 Durazno, higo, uva","Frutas con picaduras, pudrición blanda y larvas dentro.","Recoja y entierre fruta caída, trampas con vinagre y azúcar, cosecha oportuna."],
+ ["Tizón tardío o rancha","🍂 Papa, tomate","Manchas oscuras en hojas, moho blanco en el envés, tallos negros. Avanza con lluvia y neblina.","Variedades resistentes, aporque, buena aireación. Fungicida preventivo antes de lluvias fuertes."],
+ ["Oídio (ceniza)","⚪ Uva, arveja, zapallo, cebolla","Polvo blanco sobre hojas y frutos.","Poda para airear, azufre en polvo o mojable según etiqueta, evitar exceso de nitrógeno."],
+ ["Mildiu","🍇 Uva, cebolla","Manchas amarillas arriba y moho gris abajo en tiempo húmedo.","Buena ventilación, no regar el follaje, caldo bordelés preventivo."],
+ ["Lepra del durazno","🍑 Durazno","Hojas abultadas, rojizas y deformes en primavera.","Aplicar caldo bordelés o cúprico al hinchamiento de yemas, antes de la brotación. Quemar hojas enfermas."]
+];
+const CAL=[
+ ["Enero",["Aporque y deshierbe de maíz y papa","Vigilar rancha en lluvias fuertes","Cosechar duraznos y choclo temprano","Mantener drenajes limpios"]],
+ ["Febrero",["Cosecha de choclo, manzana y uva temprana","Control de plagas y hongos por humedad","Abonar frutales tras la cosecha","Preparar semilla de siembra de arveja"]],
+ ["Marzo",["Siembra de arveja y haba de invierno","Cosecha de maíz y papa de lluvia (según siembra)","Almácigos de repollo y cebolla","Reparar acequias y atajados"]],
+ ["Abril",["Cosecha y secado de maíz y papa","Selección y almacenamiento de semilla","Cosechar uva y manzana tardía","Aprovechar humedad para siembra de trigo con riego"]],
+ ["Mayo",["Siembra de trigo con riego","Almácigo de cebolla","Trillado y guardado de cereales","Incorporar rastrojo o abonar"]],
+ ["Junio",["Proteger cultivos de heladas","Siembra de arveja con riego","Arar y dejar reposar terrenos","Cuidar el agua: riego por la tarde"]],
+ ["Julio",["Poda de durazno, manzana, pera y uva","Plantación de frutales (reposo)","Trasplante de cebolla","Aplicar caldo bordelés tras la poda"]],
+ ["Agosto",["Siembra de papa temprana con riego","Almácigo de tomate y locoto","Plantación de estacas de higo y uva","Preparar abono y compost"]],
+ ["Septiembre",["Siembra de maíz en zonas con humedad","Floración de frutales: proteger de heladas tardías","Trasplante de tomate","Arar antes de las lluvias"]],
+ ["Octubre",["Siembra de maíz, papa y haba con inicio de lluvias","Trasplante de locoto y siembra de zapallo","Controlar maleza y vigilar pulgón","Limpiar canales para recibir lluvias"]],
+ ["Noviembre",["Segunda siembra de maíz y papa de lluvia","Aporque de las primeras siembras","Deshierbe y control de plagas","Ralear frutos del durazno"]],
+ ["Diciembre",["Aporque y control de rancha","Cosechar duraznos tempranos","Vigilar drenaje y granizo","Trigo de lluvia en algunos lugares"]]
+];
+
+/* ===== RENDER ===== */
+const $=s=>document.querySelector(s);
+function ficha(rows){return '<div class="ficha">'+rows.map(([l,v,a])=>`<div class="${a?'ancho':''}"><b>${l}</b>${v}</div>`).join('')+'</div>'}
+function listaCultivos(el,datos,etq){
+  $(el).innerHTML=datos.map(c=>`<details><summary><span>${c[1]}</span>${c[0]}</summary>${ficha([[etq[0],c[2]],[etq[1],c[3]],[etq[2],c[4]],[etq[3],c[5]],[etq[4],c[6],1]])}</details>`).join('');
+}
+listaCultivos('#lista-verduras',VERDURAS,["Cuándo sembrar","Cuándo cosechar","Distancia de siembra","Riego","Consejo"]);
+listaCultivos('#lista-cereales',CEREALES,["Cuándo sembrar","Cuándo cosechar","Distancia de siembra","Riego","Consejo"]);
+listaCultivos('#lista-frutas',FRUTAS,["Plantación","Poda y floración","Cosecha","Riego","Cuidados"]);
+$('#lista-plagas').innerHTML=PLAGAS.map(p=>`<details><summary>${p[0]}</summary>${ficha([["Afecta a",p[1]],["Cómo se reconoce",p[2],1],["Cómo controlar",p[3],1]])}</details>`).join('');
+
+/* Menú */
+function pintarMenu(f=""){
+  const q=f.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+  const vis=TEMAS.filter(t=>(t.t+" "+t.d+" "+t.k).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").includes(q));
+  $('#menu').innerHTML=vis.map(t=>`<button class="btn-menu" data-ir="${t.id}"><span class="ic">${t.ic}</span><span><b>${t.t}</b><span class="d">${t.d}</span></span></button>`).join('');
+  $('#vacio').style.display=vis.length?'none':'block';
+}
+pintarMenu();
+$('#buscar').addEventListener('input',e=>pintarMenu(e.target.value));
+
+/* Calendario */
+const hoy=new Date().getMonth();let mesSel=hoy;
+function pintarCal(){
+  $('#meses').innerHTML=CAL.map((m,i)=>`<button class="mes ${i===mesSel?'sel':''} ${i===hoy?'hoy':''}" data-mes="${i}">${m[0].slice(0,3)}</button>`).join('');
+  const [n,l]=CAL[mesSel];
+  $('#detalle-mes').innerHTML=`<h3>Labores de ${n}</h3><ul>${l.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+}
+pintarCal();
+$('#meses').addEventListener('click',e=>{const b=e.target.closest('[data-mes]');if(b){mesSel=+b.dataset.mes;pintarCal()}});
+
+/* ===== NAVEGACIÓN ENTRE PÁGINAS ===== */
+function ir(id,push=true){
+  if(!document.getElementById(id))id="inicio";
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('activa',p.id===id));
+  if(push)history.pushState({id},"","#"+id);
+  window.scrollTo({top:0});
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ir]');if(b)ir(b.dataset.ir)});
+window.addEventListener('popstate',()=>ir(location.hash.slice(1)||"inicio",false));
+ir(location.hash.slice(1)||"inicio",false);
+</script>
+</body>
+</html>
